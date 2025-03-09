@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const { getStoredPosts, storePosts } = require('./data/posts');
+const { getStoredPosts, storePosts } = require('../data/posts'); // ✅ Adjust path
 
 const app = express();
 app.use(bodyParser.json());
@@ -14,12 +14,12 @@ app.use((req, res, next) => {
 	next();
 });
 
-// Root Route (To Check If Backend is Running)
+// Root Route (For Testing)
 app.get('/', (req, res) => {
-	res.send('Backend is running!');
+	res.send('Backend is running on Vercel!');
 });
 
-// Get All Posts (Missing in Your Code)
+// Get All Posts
 app.get('/posts', async (req, res) => {
 	const posts = await getStoredPosts();
 	res.json({ posts });
@@ -38,6 +38,5 @@ app.post('/posts', async (req, res) => {
 	res.status(201).json({ message: 'Stored new post.', post: newPost });
 });
 
-// Start Server
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+// Export as Vercel API handler (IMPORTANT!)
+module.exports = app;
