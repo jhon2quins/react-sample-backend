@@ -4,30 +4,28 @@ const bodyParser = require('body-parser');
 const { getStoredPosts, storePosts } = require('./data/posts');
 
 const app = express();
-
 app.use(bodyParser.json());
 
+// CORS Headers
 app.use((req, res, next) => {
-	// Attach CORS headers
-	// Required when using a detached backend (that runs on a different domain)
 	res.setHeader('Access-Control-Allow-Origin', '*');
-	res.setHeader('Access-Control-Allow-Methods', 'GET,POST');
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
 	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 	next();
 });
 
+// Root Route (To Check If Backend is Running)
+app.get('/', (req, res) => {
+	res.send('Backend is running!');
+});
+
+// Get All Posts (Missing in Your Code)
 app.get('/posts', async (req, res) => {
-	const storedPosts = await getStoredPosts();
-	// await new Promise((resolve, reject) => setTimeout(() => resolve(), 1500));
-	res.json({ posts: storedPosts });
+	const posts = await getStoredPosts();
+	res.json({ posts });
 });
 
-app.get('/posts/:id', async (req, res) => {
-	const storedPosts = await getStoredPosts();
-	const post = storedPosts.find((post) => post.id === req.params.id);
-	res.json({ post });
-});
-
+// Create New Post
 app.post('/posts', async (req, res) => {
 	const existingPosts = await getStoredPosts();
 	const postData = req.body;
@@ -40,6 +38,6 @@ app.post('/posts', async (req, res) => {
 	res.status(201).json({ message: 'Stored new post.', post: newPost });
 });
 
+// Start Server
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
-
